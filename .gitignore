@@ -1,0 +1,9 @@
+# Git ignore for Gmail Automation Agent
+.env
+.streamlit/secrets.toml
+data/
+*.pyc
+__pycache__/
+.pytest_cache/
+sentec_env/
+*.log
