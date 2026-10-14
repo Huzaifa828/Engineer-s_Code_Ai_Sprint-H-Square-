@@ -94,3 +94,23 @@ def test_failed_emails_are_retried(mock_cls, mock_ver, mock_drf):
         res2 = runner.process_single_email("fake_msg_000")
         assert res2["status"] in ("Drafted", "Escalated", "NeedsReview")
         assert store_manager.emails["fake_msg_000"]["record"]["attempts"] == 2
+
+
+@patch("pipeline.generate_draft", return_value=({
+    "draft_text": "Policy fallback",
+    "requires_human_review": True,
+    "generation_mode": "policy_fallback",
+    "versions": [],
+}, 0))
+@patch("pipeline.verify_email_blind", return_value=({"category": "Inquiry", "escalate": False, "short_reasoning": "Agreed"}, 50))
+@patch("pipeline.classify_email", return_value=({"status": "Classified", "category": "Inquiry", "confidence": 0.95, "escalate": False, "evidence_quote": "enterprise licensing"}, 100))
+def test_policy_fallback_is_routed_for_human_review(mock_cls, mock_ver, mock_drf):
+    with tempfile.TemporaryDirectory() as tmpdir:
+        json_store = JsonStore(base_dir=tmpdir)
+        store_manager = StoreManager(email_hash="fallback_hash", supabase_store=SupabaseStore(None), json_store=json_store)
+        runner = PipelineRunner(store_manager=store_manager, gmail_client=FakeGmailClient(message_count=1))
+
+        result = runner.process_single_email("fake_msg_000")
+
+        assert result["status"] == "NeedsReview"
+        assert result["record"]["draft"]["generation_mode"] == "policy_fallback"

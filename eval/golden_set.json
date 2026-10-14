@@ -14,7 +14,7 @@
     "id": "gold_02",
     "sender": "lawyer@firm.com",
     "subject": "Notice of Litigation",
-    "body": "Dear Apex Solutions, we represent client #492 and will sue you in court if damages are not settled.",
+    "body": "Dear Student Helpdesk, we represent client #492 and will sue you in court if damages are not settled.",
     "is_auto_reply": false,
     "attachment_names": [],
     "expected_status": "Escalated",

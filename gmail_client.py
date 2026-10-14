@@ -7,6 +7,7 @@ import base64
 import html
 import re
 import time
+from datetime import datetime, timezone
 from email.mime.text import MIMEText
 from html.parser import HTMLParser
 from typing import Dict, List, Optional, Any, Tuple
@@ -137,6 +138,15 @@ class GmailClient:
         msg_id_header = headers.get("message-id", "")
         references = headers.get("references", "")
         in_reply_to = headers.get("in-reply-to", msg_id_header)
+        received_at = headers.get("date", "")
+        internal_date = raw_message.get("internalDate")
+        if internal_date is not None:
+            try:
+                received_at = datetime.fromtimestamp(
+                    int(internal_date) / 1000, tz=timezone.utc
+                ).isoformat()
+            except (TypeError, ValueError, OSError, OverflowError):
+                pass
 
         # Detect auto-reply / bounce headers
         auto_submitted = headers.get("auto-submitted", "").lower()
@@ -157,6 +167,7 @@ class GmailClient:
         return {
             "message_id": message_id,
             "thread_id": thread_id,
+            "received_at": received_at,
             "sender": sender,
             "reply_to": reply_to,
             "subject": subject,

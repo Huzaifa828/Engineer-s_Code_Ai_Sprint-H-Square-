@@ -208,6 +208,7 @@ class StoreManager:
         # In-memory working state
         self.settings: Dict[str, Any] = {
             "auto_poll": True,
+            "auto_draft": True,
             "confidence_threshold": 0.6,
             "star_escalated": True,
         }

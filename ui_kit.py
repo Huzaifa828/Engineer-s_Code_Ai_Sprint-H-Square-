@@ -48,6 +48,13 @@ _CSS = """
 def chip(status: str) -> str:
     return f"{STATUS_ICON.get(status, '⚪')} {status}"
 
+def _status_after_draft(current_status: str, draft: Dict[str, Any]) -> str:
+    if current_status == "Escalated":
+        return current_status
+    if draft.get("requires_human_review") or current_status == "NeedsReview":
+        return "NeedsReview"
+    return "Drafted"
+
 
 def inject_css() -> None:
     st.markdown(_CSS, unsafe_allow_html=True)
@@ -368,7 +375,7 @@ def classification_view(ctx: Ctx, mid: str, kp: str) -> None:
                 category=new_cat, status="Drafted",
             )
         rec["draft"] = draft
-        store.upsert_email_memory(mid, "Drafted", rec)
+        store.upsert_email_memory(mid, _status_after_draft(item.get("status", "Drafted"), draft), rec)
         store.flush_dirty_emails()
         st.toast("Category updated and draft regenerated")
         st.rerun()
@@ -404,12 +411,23 @@ def draft_editor(ctx: Ctx, mid: str, kp: str) -> None:
                     escalation_reasons=cls.get("escalation_reasons", []),
                 )
             rec["draft"] = new
-            _persist(new_status="Drafted" if status == "Classified" else status)
-            st.toast("Draft generated successfully")
+            _persist(new_status=_status_after_draft(status, new))
+            if new.get("generation_mode") == "policy_fallback":
+                st.toast("Policy fallback generated; human review required")
+            else:
+                st.toast("Draft generated successfully")
             st.rerun()
         return
 
-    if draft.get("requires_human_review"):
+    generation_mode = draft.get("generation_mode")
+    if generation_mode == "policy_fallback":
+        st.error(
+            "The language-model draft could not be generated. This policy-based fallback requires human review; "
+            "check application logs for the cause."
+        )
+    elif generation_mode == "holding_template":
+        st.warning("This is a policy-based holding reply and requires human review.")
+    elif draft.get("requires_human_review"):
         st.warning("Requires human review — this is a holding reply.")
     if draft.get("edited_by_human"):
         st.success("Edited by a human reviewer")
@@ -462,8 +480,11 @@ def draft_editor(ctx: Ctx, mid: str, kp: str) -> None:
                 existing_versions=draft.get("versions", []),
             )
         rec["draft"] = new
-        _persist()
-        st.toast("Draft regenerated with new guidelines")
+        _persist(new_status=_status_after_draft(status, new))
+        if new.get("generation_mode") == "policy_fallback":
+            st.toast("Policy fallback generated; human review required")
+        else:
+            st.toast("Draft regenerated with new guidelines")
         st.rerun()
 
     if rec.get("thread_id"):

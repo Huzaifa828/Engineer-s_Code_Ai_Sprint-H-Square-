@@ -24,6 +24,8 @@ The application leverages three distinct LLM models via Groq to prevent single-m
 | **Verifier** | `VERIFIER_MODEL` | `mixtral-8x7b-32768` | Independent, blind classification without seeing the classifier's output. |
 | **Drafter** | `DRAFTER_MODEL` | `llama-3.1-8b-instant` | Policy-constrained draft generation and holding replies. |
 
+For ordinary requests, the drafter receives the email and its matching written policy rule. If model generation fails or is rate-limited, the app marks the policy fallback for human review instead of presenting it as a completed model draft.
+
 > **Note on Groq Rate Limits**: Groq applies TPM (tokens per minute) limits per model. Using three distinct models allows three independent rate-limiting buckets.
 
 ---

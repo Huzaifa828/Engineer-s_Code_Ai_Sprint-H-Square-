@@ -311,6 +311,18 @@ def _date_str(rec: dict) -> str:
         return str(raw)[:12]
 
 
+def _received_sort_key(row: dict) -> int:
+    rec = row.get("rec") or {}
+    raw = (
+        rec.get("date")
+        or rec.get("received_at")
+        or rec.get("timestamp")
+        or row.get("updated")
+    )
+    parsed = pd.to_datetime(raw, utc=True, errors="coerce")
+    return int(parsed.value) if not pd.isna(parsed) else -1
+
+
 def _status_label(status: str) -> str:
     return _esc(status or "Queued")
 
@@ -374,7 +386,7 @@ def _email_row(x: dict, selected: bool) -> tuple[bool, bool]:
 # ----------------------------------------------------------------------------
 def render_mailbox() -> None:
     ctx = get_ctx()
-    all_rows = rows(ctx.store)
+    all_rows = sorted(rows(ctx.store), key=_received_sort_key, reverse=True)
     st.markdown(CSS, unsafe_allow_html=True)
 
     st.title("📥 Mailbox")

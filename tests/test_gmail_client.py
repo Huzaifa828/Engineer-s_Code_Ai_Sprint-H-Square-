@@ -41,6 +41,7 @@ def test_parse_message_multipart():
     raw_message = {
         "id": "msg_001",
         "threadId": "thread_001",
+        "internalDate": "1791799200000",
         "payload": {
             "headers": [
                 {"name": "From", "value": "customer@example.com"},
@@ -63,6 +64,7 @@ def test_parse_message_multipart():
 
     parsed = client.parse_message(raw_message)
     assert parsed["message_id"] == "msg_001"
+    assert parsed["received_at"] == "2026-10-12T10:00:00+00:00"
     assert parsed["sender"] == "customer@example.com"
     assert parsed["subject"] == "Order late"
     assert "Urgent: Delivery delayed" in parsed["body"]

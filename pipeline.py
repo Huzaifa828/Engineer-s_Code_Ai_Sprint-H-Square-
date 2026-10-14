@@ -37,7 +37,7 @@ def get_account_lock(email_hash: str) -> threading.Lock:
         return _ACCOUNT_LOCKS[email_hash]
 
 
-TERMINAL_STATUSES = {"Classified", "Drafted", "Escalated", "NeedsReview", "Skipped"}
+TERMINAL_STATUSES = {"Classified", "Drafted", "Escalated", "NeedsReview", "Skipped", "Failed"}
 
 
 class PipelineRunner:
@@ -140,8 +140,11 @@ class PipelineRunner:
         attempts = rec.get("attempts", 0) + 1
         rec["attempts"] = attempts
 
-        # If already terminal and not forcing reclassify, do nothing
-        if current_status in TERMINAL_STATUSES and not force_reclassify:
+        # If already terminal and not forcing reclassify, do nothing.
+        # Failed emails are retried until they hit the three-attempt retry cap.
+        if current_status == "Failed" and rec.get("attempts", 0) >= 3 and not force_reclassify:
+            return {"status": current_status, "record": rec}
+        if current_status in TERMINAL_STATUSES and current_status != "Failed" and not force_reclassify:
             return {"status": current_status, "record": rec}
 
         try:
@@ -212,9 +215,9 @@ class PipelineRunner:
                 final_status = "Drafted"
 
             # Step D: Draft creation (only if auto_draft is enabled in settings or already drafted)
-            should_auto_draft = self.store.settings.get("auto_draft", False)
+            should_auto_draft = self.store.settings.get("auto_draft", True)
             existing_draft_info = rec.get("draft", {})
-            
+
             if should_auto_draft or existing_draft_info.get("draft_text"):
                 existing_versions = existing_draft_info.get("versions", [])
                 reviewer_guidelines = existing_draft_info.get("guidelines", "")
@@ -230,6 +233,8 @@ class PipelineRunner:
                     existing_versions=existing_versions,
                 )
                 rec["tokens_used"] += draft_tokens
+                if draft_result.get("requires_human_review") and final_status == "Drafted":
+                    final_status = "NeedsReview"
 
                 # Synchronize draft to Gmail if connected
                 if self.gmail:

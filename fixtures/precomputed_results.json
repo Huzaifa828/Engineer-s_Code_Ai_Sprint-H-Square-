@@ -106,7 +106,7 @@
       "sender": "attorney.clark@lawfirm.com",
       "reply_to": "attorney.clark@lawfirm.com",
       "subject": "Formal Demand for Settlement - Breach of Contract",
-      "body": "To Apex Horizon Solutions Management: Be advised that unless payment damages are remediated within 48 hours, our litigation team will file a formal complaint in federal court.",
+      "body": "To Student Helpdesk: Be advised that unless payment damages are remediated within 48 hours, our litigation team will file a formal complaint in federal court.",
       "attachment_names": ["notice_of_claim.pdf"],
       "classification": {
         "category": "Billing Complaint",
@@ -132,13 +132,13 @@
       },
       "tokens_used": 280,
       "draft": {
-        "draft_text": "Hello,\n\nThank you for contacting Apex Horizon Solutions.\n\nWe have received your message regarding \"Formal Demand for Settlement - Breach of Contract\". A senior specialist from our executive team has been assigned to your case regarding legal threat and will review the details to follow up with you directly.\n\nIf you have any urgent reference numbers or additional details, please feel free to reply to this email.\n\nSincerely,\nExecutive Escalations Team\nApex Horizon Solutions",
+        "draft_text": "Hello,\n\nThank you for contacting Student Helpdesk.\n\nWe have received your message regarding \"Formal Demand for Settlement - Breach of Contract\". The relevant office or Student Helpdesk team will review it and follow up with you directly.\n\nIf you have any urgent reference numbers or additional details, please feel free to reply to this email.\n\nStudent Helpdesk",
         "requires_human_review": true,
         "edited_by_human": false,
         "versions": [
           {
             "version": 1,
-            "text": "Hello,\n\nThank you for contacting Apex Horizon Solutions.\n\nWe have received your message regarding \"Formal Demand for Settlement - Breach of Contract\". A senior specialist from our executive team has been assigned to your case regarding legal threat and will review the details to follow up with you directly.\n\nIf you have any urgent reference numbers or additional details, please feel free to reply to this email.\n\nSincerely,\nExecutive Escalations Team\nApex Horizon Solutions",
+            "text": "Hello,\n\nThank you for contacting Student Helpdesk.\n\nWe have received your message regarding \"Formal Demand for Settlement - Breach of Contract\". The relevant office or Student Helpdesk team will review it and follow up with you directly.\n\nIf you have any urgent reference numbers or additional details, please feel free to reply to this email.\n\nStudent Helpdesk",
             "timestamp": "2026-10-12T12:02:00Z",
             "author": "holding_template"
           }
@@ -181,13 +181,13 @@
       },
       "tokens_used": 0,
       "draft": {
-        "draft_text": "Hello,\n\nThank you for contacting Apex Horizon Solutions.\n\nWe have received your message regarding \"Account update required\". A senior specialist from our executive team has been assigned to your case regarding prompt injection suspected and will review the details to follow up with you directly.\n\nSincerely,\nExecutive Escalations Team\nApex Horizon Solutions",
+        "draft_text": "Hello,\n\nThank you for contacting Student Helpdesk.\n\nWe have received your message regarding \"Account update required\". The relevant office or Student Helpdesk team will review it and follow up with you directly.\n\nStudent Helpdesk",
         "requires_human_review": true,
         "edited_by_human": false,
         "versions": [
           {
             "version": 1,
-            "text": "Hello,\n\nThank you for contacting Apex Horizon Solutions.\n\nWe have received your message regarding \"Account update required\". A senior specialist from our executive team has been assigned to your case regarding prompt injection suspected and will review the details to follow up with you directly.\n\nSincerely,\nExecutive Escalations Team\nApex Horizon Solutions",
+            "text": "Hello,\n\nThank you for contacting Student Helpdesk.\n\nWe have received your message regarding \"Account update required\". The relevant office or Student Helpdesk team will review it and follow up with you directly.\n\nStudent Helpdesk",
             "timestamp": "2026-10-12T12:03:00Z",
             "author": "holding_template"
           }
