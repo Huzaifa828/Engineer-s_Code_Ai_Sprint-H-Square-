@@ -18,8 +18,8 @@ def render_evaluation() -> None:
     st.info(f"Loaded {len(golden_cases)} curated test cases from `eval/golden_set.json`.")
 
     col_btn1, col_btn2, _ = st.columns([1.5, 1.5, 3])
-    run_deterministic = col_btn1.button("⚡ Run Deterministic / Rules Check", use_container_width=True)
-    run_full_llm = col_btn2.button("🤖 Run Full Multi-Model LLM Benchmark", use_container_width=True, disabled=ctx.is_offline)
+    run_deterministic = col_btn1.button("⚡ Run Deterministic / Rules Check", width="stretch")
+    run_full_llm = col_btn2.button("🤖 Run Full Multi-Model LLM Benchmark", width="stretch", disabled=ctx.is_offline)
 
     if run_deterministic or run_full_llm:
         with st.spinner("Executing benchmark across evaluation cases..."):
@@ -41,7 +41,7 @@ def render_evaluation() -> None:
                     }
                     for c in golden_cases
                 ]),
-                use_container_width=True,
+                width="stretch",
             )
         return
 
@@ -83,7 +83,7 @@ def render_evaluation() -> None:
                 "Subject": r.get("subject", ""),
             })
 
-        st.dataframe(pd.DataFrame(breakdown_rows), use_container_width=True, height=260)
+        st.dataframe(pd.DataFrame(breakdown_rows), width="stretch", height=260)
 
 
 render_evaluation()

@@ -42,7 +42,7 @@ def render_dashboard() -> None:
         status_data = [{"Status": f"{STATUS_ICON.get(k, '⚪')} {k}", "Count": v} for k, v in s["by_status"].items() if v > 0]
         if status_data:
             df_status = pd.DataFrame(status_data).set_index("Status")
-            st.bar_chart(df_status, use_container_width=True)
+            st.bar_chart(df_status, width="stretch")
         else:
             st.info("No emails indexed yet.")
 
@@ -59,7 +59,7 @@ def render_dashboard() -> None:
         active_cats = [{"Category": k, "Count": v} for k, v in cat_counts.items() if v > 0]
         if active_cats:
             df_cat = pd.DataFrame(active_cats).set_index("Category")
-            st.bar_chart(df_cat, use_container_width=True)
+            st.bar_chart(df_cat, width="stretch")
         else:
             st.info("No classifications completed yet.")
 
@@ -85,7 +85,7 @@ def render_dashboard() -> None:
                     st.markdown(f"**{rec.get('subject') or '(No Subject)'}**")
                     st.caption(f"From: `{rec.get('sender', 'Unknown')}` · Status: {chip(status)}")
                 with top_r:
-                    if st.button("Open in Studio ✍️", key=f"dash_open_studio_{mid}", use_container_width=True):
+                    if st.button("Open in Studio ✍️", key=f"dash_open_studio_{mid}", width="stretch"):
                         open_in(mid, "studio")
 
                 if cls.get("escalation_reasons"):

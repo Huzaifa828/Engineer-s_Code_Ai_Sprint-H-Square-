@@ -16,8 +16,8 @@ def render_activity() -> None:
 
     col1, col2, col3 = st.columns(3)
     col1.metric("Sync Status", store.sync_status_text)
-    col2.metric("Audited Events", len(store.audit_log))
-    col3.metric("Dirty In-Memory Items", len(store.dirty_email_ids))
+    col2.metric("Audited Events", len(store.audit))
+    col3.metric("Dirty In-Memory Items", len(store.dirty_message_ids))
 
     st.divider()
 
@@ -25,23 +25,23 @@ def render_activity() -> None:
 
     with tab_audit:
         st.subheader("Event Trail")
-        if not store.audit_log:
+        if not store.audit:
             st.info("No audit logs recorded yet in this session.")
         else:
             # Reverse chronologically
-            rev_logs = list(reversed(store.audit_log))
+            rev_logs = list(reversed(store.audit))
             rows = []
             for entry in rev_logs:
                 rows.append({
                     "Timestamp": entry.get("timestamp", ""),
-                    "Action": entry.get("action", ""),
-                    "Details": str(entry.get("payload", "")),
+                    "Action": entry.get("event", ""),
+                    "Details": str(entry.get("details", "")),
                 })
-            st.dataframe(pd.DataFrame(rows), use_container_width=True)
+            st.dataframe(pd.DataFrame(rows), width="stretch")
 
     with tab_sync:
         st.subheader("State & Database Sync")
-        st.write(f"**Last Sync Attempt:** `{store.last_synced_at or 'Never'}`")
+        st.write(f"**Last Successful Sync:** `{store.last_synced or 'Never'}`")
         st.write(f"**Account Identifier (Hash):** `{store.email_hash}`")
         st.write(f"**Persistence Target:** {'Local Cache Only (Offline)' if ctx.is_offline else 'Supabase + Atomic Local Cache'}")
         
@@ -59,7 +59,7 @@ def render_activity() -> None:
             "offline_mode": ctx.is_offline,
             "user_email": ctx.user_email,
             "emails_loaded_count": len(store.emails),
-            "dirty_ids": list(store.dirty_email_ids),
+            "dirty_ids": list(store.dirty_message_ids),
         })
 
 

@@ -146,13 +146,13 @@ def login_screen() -> None:
             st.write("Allow the agent to read your inbox and save drafts in the original thread.")
             try:
                 url, _ = get_authorization_url()
-                st.link_button("🔑 Sign in with Google", url, type="primary", use_container_width=True)
+                st.link_button("🔑 Sign in with Google", url, type="primary", width="stretch")
             except Exception as exc:  # noqa: BLE001
                 st.warning(f"Google sign-in is not configured: {exc}")
         with st.container(border=True):
             st.subheader("Try the offline demo")
             st.write("Runs on precomputed sample emails. No Google or Groq calls.")
-            if st.button("Launch offline demo", use_container_width=True):
+            if st.button("Launch offline demo", width="stretch"):
                 st.session_state.update(
                     offline_mode=True, user_email="demo.judge@example.com",
                     email_hash=hash_email("demo.judge@example.com"),
@@ -280,12 +280,12 @@ def render_sidebar(ctx: Ctx) -> None:
                 st.caption("Offline demo · sample data only")
 
         c1, c2 = st.columns(2)
-        if c1.button("⚡ Fetch now", use_container_width=True, disabled=ctx.is_offline):
+        if c1.button("⚡ Fetch now", width="stretch", disabled=ctx.is_offline):
             with st.spinner("Sweeping inbox…"):
                 changed = maybe_tick(ctx, force=True)
             st.session_state["flash"] = f"Sweep finished · {changed} email(s) updated"
             st.rerun()
-        if c2.button("🔄 Retry failed", use_container_width=True, disabled=ctx.is_offline):
+        if c2.button("🔄 Retry failed", width="stretch", disabled=ctx.is_offline):
             st.session_state["flash"] = f"Retried {retry_failed(ctx)} failed email(s)"
             st.rerun()
 
@@ -301,10 +301,10 @@ def render_sidebar(ctx: Ctx) -> None:
                 float(store.settings.get("confidence_threshold", CONFIDENCE_THRESHOLD)), 0.05,
             )
         with st.expander("Account"):
-            if st.button("Log out", use_container_width=True):
+            if st.button("Log out", width="stretch"):
                 st.session_state.clear()
                 st.rerun()
-            if st.button("Delete my data", use_container_width=True):
+            if st.button("Delete my data", width="stretch"):
                 _confirm_delete()
         st.caption("Keep this tab visible during the demo so polling stays on schedule.")
 
@@ -428,7 +428,7 @@ def draft_editor(ctx: Ctx, mid: str, kp: str) -> None:
 
     b1, b2, b3 = st.columns(3)
     if b1.button("💾 Save to Gmail draft", key=f"{kp}_save_{mid}", type="primary" if dirty else "secondary",
-                 use_container_width=True):
+                 width="stretch"):
         new_draft = record_human_edit(draft, text) if dirty else draft
         if guidelines.strip() != (new_draft.get("guidelines") or ""):
             new_draft["guidelines"] = guidelines.strip()
@@ -453,7 +453,7 @@ def draft_editor(ctx: Ctx, mid: str, kp: str) -> None:
         _persist()
         st.rerun()
 
-    if b2.button("✨ Regenerate", key=f"{kp}_regen_{mid}", use_container_width=True):
+    if b2.button("✨ Regenerate", key=f"{kp}_regen_{mid}", width="stretch"):
         with st.spinner("Regenerating with guidelines…"):
             new, _ = generate_draft(
                 sender=rec.get("sender", ""), subject=rec.get("subject", ""), body=rec.get("body", ""),
@@ -468,7 +468,7 @@ def draft_editor(ctx: Ctx, mid: str, kp: str) -> None:
 
     if rec.get("thread_id"):
         b3.link_button("🌐 Open in Gmail", f"https://mail.google.com/mail/u/0/#inbox/{rec['thread_id']}",
-                       use_container_width=True)
+                       width="stretch")
 
     versions = draft.get("versions", [])
     if len(versions) > 1:
